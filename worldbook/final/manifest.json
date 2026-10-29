@@ -1,10 +1,12 @@
 {
-  "format": "kaguya-university-worldbook-modules-v1",
-  "name": "辉夜大小姐想让我告白 - 秀知院大学AU v1.0",
+  "format": "kaguya-shuchiin-university-worldbook-modules-v1",
+  "name": "辉夜大小姐想让我告白 - 秀知院大学 v1.0",
   "source_entry_count": 83,
   "runtime_entry_count": 83,
   "entry_id_range": "0-82",
   "ids_unique": true,
+  "runtime_output": "辉夜大小姐_秀知院大学_character_book_v1.0.json",
+  "runtime_text_policy": "in-world-only",
   "assembly_order": [
     "00_locations.json",
     "10_male_characters.json",
@@ -35,6 +37,7 @@
     "entry_count": 83,
     "all_ids_covered_once": true,
     "default_timeline": "第一季-上 / entry 74",
-    "serialization_note": "模块可能采用 pretty 或 minified JSON；不以字节级 SHA 作为语义一致性判据，以 entry_id、字段结构与 QA 为准。"
+    "serialization_note": "模块允许 pretty 或 minified JSON；语义一致性以 entry_id、字段结构与 QA 为准。",
+    "runtime_note": "模块是构建输入；正式 Character Book 必须经 assemble_worldbook.py 生成，以确保世界内描述净化规则生效。"
   }
 }
