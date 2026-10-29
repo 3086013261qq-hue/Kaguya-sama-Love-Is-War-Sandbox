@@ -1,0 +1,36 @@
+{
+  "avatar": "charaCard/1781972643346_辉夜大小姐想让我告白 - 沙盒.png",
+  "name": "辉夜大小姐想让我告白 - 沙盒",
+  "description": "《辉夜大小姐想让我告白～天才们的恋爱头脑战～》同人卡",
+  "personality": "",
+  "scenario": "",
+  "mes_example": "",
+  "creator_notes": "",
+  "system_prompt": "",
+  "post_history_instructions": "",
+  "tags": [],
+  "creator": "SheepSheep",
+  "character_version": "1.2.6",
+  "nickname": null,
+  "creator_notes_multilingual": null,
+  "source": null,
+  "group_only_greetings": [],
+  "creation_date": 0,
+  "modification_date": 1781976091,
+  "extensions": {
+    "fav": false,
+    "regex_scripts": [],
+    "talkativeness": "0.5",
+    "world": "辉夜大小姐想让我告白 - 沙盒 1.2.6",
+    "depth_prompt": {
+      "prompt": "",
+      "depth": 4,
+      "role": "system"
+    },
+    "source_owner": [],
+    "tavern_helper": {
+      "scripts": [],
+      "variables": {}
+    }
+  }
+}
