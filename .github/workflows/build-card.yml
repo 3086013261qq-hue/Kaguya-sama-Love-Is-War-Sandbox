@@ -1,4 +1,5 @@
 name: Build fullstack character card
+# Rebuild trigger: runtime pin 8870c98
 
 on:
   push:
