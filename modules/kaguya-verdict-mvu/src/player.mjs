@@ -141,6 +141,7 @@ export function createPlayer(audio, manifest, changed = () => {}) {
     seek,
     enter() {
       if (current < 0) select(tracks.findIndex(t => t.id === defaultId));
+      if (audio.paused) play();
     },
     toggle() {
       if (audio.paused) play();
