@@ -7,7 +7,7 @@ import re
 import subprocess
 from pathlib import Path
 
-SOURCE_FREEZE = "c44be58fa878031f06c6ae8b884740e3339b102e"
+SOURCE_FREEZE = "fc3ef03f88e0bd3ea723c44673969db248de6910"
 OUT_DIR = Path("build/worldbook")
 OUT_JSON = OUT_DIR / "辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json"
 OUT_QA = OUT_DIR / "WORLDBOOK_ASSEMBLY_v1.0_QA.md"
