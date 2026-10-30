@@ -1,5 +1,5 @@
 name: Build fullstack character card
-# Rebuild trigger: runtime pin 8870c98
+# Rebuild trigger: opening-lockscreen runtime e96a243
 
 on:
   push:
