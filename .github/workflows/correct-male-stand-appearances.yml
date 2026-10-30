@@ -1,0 +1,56 @@
+name: Correct male Stand appearances
+
+on:
+  push:
+    paths:
+      - 'tools/correct_male_stand_appearances.py'
+      - '.github/workflows/correct-male-stand-appearances.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore male Stand silhouettes
+        run: python tools/correct_male_stand_appearances.py
+
+      - name: Commit corrected Stand sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add characters/stand-abilities qa/031_替身外貌女性化统一QA_v1.0.md
+          git commit -m "fix: keep male Stand silhouettes unchanged"
+
+      - name: Advance fullstack source freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          python - "$SOURCE_SHA" <<'PY'
+          from pathlib import Path
+          import re, sys
+          sha = sys.argv[1]
+          path = Path('tools/assemble_fullstack_worldbook.py')
+          text = path.read_text(encoding='utf-8')
+          new, n = re.subn(
+              r'(?m)^(SOURCE_FREEZE\s*=\s*["\'])[0-9a-f]{40}(["\'])$',
+              rf'\g<1>{sha}\g<2>', text, count=1,
+          )
+          if n != 1:
+              raise SystemExit('SOURCE_FREEZE assignment not found uniquely')
+          path.write_text(new, encoding='utf-8')
+          print('SOURCE_FREEZE ->', sha)
+          PY
+          git add tools/assemble_fullstack_worldbook.py
+          git commit -m "build: advance source freeze after Stand gender correction"
+          git push origin HEAD:main
