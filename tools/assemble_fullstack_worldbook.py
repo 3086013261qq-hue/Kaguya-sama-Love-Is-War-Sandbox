@@ -101,7 +101,8 @@ def source(path: str) -> str:
 
 
 def source_paths() -> list[str]:
-    return sh("git", "ls-tree", "-r", "--name-only", SOURCE_FREEZE).splitlines()
+    # Git quotes non-ASCII paths by default; disable quoting or Chinese source paths disappear from prefix matching.
+    return sh("git", "-c", "core.quotepath=false", "ls-tree", "-r", "--name-only", SOURCE_FREEZE).splitlines()
 
 
 def ext(position: int, depth: int, display_index: int, *, prevent: bool, exclude: bool, scan_depth=2) -> dict:
@@ -297,7 +298,6 @@ def build() -> tuple[dict, dict]:
     paths = source_paths()
     entries = []
 
-    # Memory infrastructure: fullstack skeleton + original Kaguya placeholders.
     mem = json.loads(source("worldbook/final/50_memory_runtime.json"))["entries"]
     mem_by = {e["comment"]: e for e in mem}
     clear = mem_by["🗑️清空局部变量(别关)"]["content"]
@@ -310,7 +310,6 @@ def build() -> tuple[dict, dict]:
         make_entry("【记忆相关:结尾】", "", 551, constant=True, selective=False, use_regex=False),
     ]
 
-    # Output rules.
     output_src = source("worldbook/output-rules/original_output_rules.md")
     status = re.search(r"\{\{setvar::status_format::.*?\n\}\}", output_src, re.S)
     combat = re.search(r"\{\{setvar::combat_driver::.*?\n\}\}", output_src, re.S)
@@ -327,14 +326,9 @@ def build() -> tuple[dict, dict]:
     entries.append(make_entry("战斗思维链", combat_content, 548, constant=True, selective=False, position="at_depth", depth=0, prevent=False, exclude=False))
     timelines = parse_timeline_entries()
     for idx, row in enumerate(timelines):
-        entries.append(make_entry(
-            f"时间线-{row['comment']}", row["content"], 470 - idx,
-            constant=True, selective=False, enabled=(row["old_id"] == 74), position="at_depth", depth=0,
-            prevent=False, exclude=False,
-        ))
+        entries.append(make_entry(f"时间线-{row['comment']}", row["content"], 470 - idx, constant=True, selective=False, enabled=(row["old_id"] == 74), position="at_depth", depth=0, prevent=False, exclude=False))
     entries.append(marker("【输出规则:结尾】", 451))
 
-    # 9 blue lights / core rules.
     blue_paths = []
     for p in paths:
         if p.startswith("worldbook/core/") and p.endswith(".md"):
@@ -343,17 +337,13 @@ def build() -> tuple[dict, dict]:
                 blue_paths.append(p)
     blue_paths.sort()
     if len(blue_paths) != 9:
-        raise RuntimeError(f"blue count {len(blue_paths)} != 9")
+        raise RuntimeError(f"blue count {len(blue_paths)} != 9: {blue_paths}")
     entries.append(marker("【核心规则:起始】", 450))
     for idx, p in enumerate(blue_paths):
         title, content = parse_blue_source(p)
-        entries.append(make_entry(
-            f"核心规则:{title}", content, 449 - idx,
-            constant=True, selective=False, keys=[], prevent=False, exclude=False,
-        ))
+        entries.append(make_entry(f"核心规则:{title}", content, 449 - idx, constant=True, selective=False, keys=[], prevent=False, exclude=False))
     entries.append(marker("【核心规则:结尾】", 401))
 
-    # 34 green lights + 30 ability entries.
     green_paths = []
     for p in paths:
         if p.startswith("worldbook/green/") and p.endswith(".md") and "/000_" not in p:
@@ -372,7 +362,7 @@ def build() -> tuple[dict, dict]:
         if p.startswith("characters/stand-augmented/") and p.endswith(".md"):
             augmented.update(parse_character_blocks(source(p)))
     if len(augmented) != 30:
-        raise RuntimeError(f"augmented character count {len(augmented)} != 30")
+        raise RuntimeError(f"augmented character count {len(augmented)} != 30: {sorted(augmented)}")
     intersect = set(base_chars) & set(augmented)
     if len(intersect) != 22:
         raise RuntimeError(f"augmented/base overlap {len(intersect)} != 22")
@@ -400,25 +390,15 @@ def build() -> tuple[dict, dict]:
 
     entries.append(marker("【核心设定:起始】", 400))
     for idx, (code, title, content) in enumerate(green_rows):
-        entries.append(make_entry(
-            f"核心设定:{code}｜{title}", content, 399 - idx,
-            constant=False, selective=True, keys=[story_regex(GREEN_PATTERNS[code])],
-            prevent=True, exclude=True,
-        ))
+        entries.append(make_entry(f"核心设定:{code}｜{title}", content, 399 - idx, constant=False, selective=True, keys=[story_regex(GREEN_PATTERNS[code])], prevent=True, exclude=True))
     for idx, (name, content) in enumerate(abilities):
-        aliases = [base_alias_patterns[name]]
-        stand_aliases = extract_stand_aliases(content)
-        aliases += [re.escape(x) for x in stand_aliases]
+        aliases = [base_alias_patterns[name]] + [re.escape(x) for x in extract_stand_aliases(content)]
         pattern = "|".join(x for x in aliases if x)
-        entries.append(make_entry(
-            f"替身能力:{name}", content, 365 - idx,
-            constant=False, selective=True, keys=[story_regex(pattern)], prevent=True, exclude=True,
-        ))
+        entries.append(make_entry(f"替身能力:{name}", content, 365 - idx, constant=False, selective=True, keys=[story_regex(pattern)], prevent=True, exclude=True))
     entries.append(marker("【核心设定:结尾】", 301))
 
-    # Characters: 22 project-major / 22 others. Status does not depend on Stand possession.
     if len(MAIN_CHARACTERS) != 22 or not MAIN_CHARACTERS.issubset(characters):
-        raise RuntimeError(f"main character set invalid: {len(MAIN_CHARACTERS)}")
+        raise RuntimeError(f"main character set invalid: {len(MAIN_CHARACTERS)}, missing={sorted(MAIN_CHARACTERS-set(characters))}")
     main_names = [n for n in characters if n in MAIN_CHARACTERS]
     other_names = [n for n in characters if n not in MAIN_CHARACTERS]
     if len(main_names) != 22 or len(other_names) != 22:
@@ -426,20 +406,13 @@ def build() -> tuple[dict, dict]:
 
     entries.append(marker("【主要角色:起始】", 300))
     for idx, name in enumerate(main_names):
-        entries.append(make_entry(
-            f"角色:{name}", characters[name], 299 - idx,
-            constant=False, selective=True, keys=[story_regex(base_alias_patterns[name])], prevent=True, exclude=True,
-        ))
+        entries.append(make_entry(f"角色:{name}", characters[name], 299 - idx, constant=False, selective=True, keys=[story_regex(base_alias_patterns[name])], prevent=True, exclude=True))
     entries.append(marker("【主要角色:结尾】", 201))
     entries.append(marker("【其他角色:起始】", 200))
     for idx, name in enumerate(other_names):
-        entries.append(make_entry(
-            f"角色:{name}", characters[name], 199 - idx,
-            constant=False, selective=True, keys=[story_regex(base_alias_patterns[name])], prevent=True, exclude=True,
-        ))
+        entries.append(make_entry(f"角色:{name}", characters[name], 199 - idx, constant=False, selective=True, keys=[story_regex(base_alias_patterns[name])], prevent=True, exclude=True))
     entries.append(marker("【其他角色:结尾】", 101))
 
-    # 11 university locations.
     loc_src = source("locations/university_locations.md")
     locations = []
     for m in re.finditer(r"<地点:([^<>\n]+)>.*?</地点:\1>", loc_src, re.S):
@@ -450,13 +423,9 @@ def build() -> tuple[dict, dict]:
         raise RuntimeError("location alias map mismatch")
     entries.append(marker("【地点:起始】", 100))
     for idx, (name, content) in enumerate(locations):
-        entries.append(make_entry(
-            f"地点:{name}", content, 99 - idx,
-            constant=False, selective=True, keys=[status_location_regex(LOCATION_ALIASES[name])], prevent=True, exclude=True,
-        ))
+        entries.append(make_entry(f"地点:{name}", content, 99 - idx, constant=False, selective=True, keys=[status_location_regex(LOCATION_ALIASES[name])], prevent=True, exclude=True))
     entries.append(marker("【地点:结尾】", 1))
 
-    # Final IDs/read order.
     for i, e in enumerate(entries):
         e["id"] = i + 1
         e["extensions"]["display_index"] = i
@@ -471,14 +440,8 @@ def build() -> tuple[dict, dict]:
         "entries": entries,
     }
 
-    # QA.
     comments = [e["comment"] for e in entries]
-    marker_names = [
-        "【记忆相关:起始】", "【记忆相关:结尾】", "【输出规则:起始】", "【输出规则:结尾】",
-        "【核心规则:起始】", "【核心规则:结尾】", "【核心设定:起始】", "【核心设定:结尾】",
-        "【主要角色:起始】", "【主要角色:结尾】", "【其他角色:起始】", "【其他角色:结尾】",
-        "【地点:起始】", "【地点:结尾】",
-    ]
+    marker_names = ["【记忆相关:起始】", "【记忆相关:结尾】", "【输出规则:起始】", "【输出规则:结尾】", "【核心规则:起始】", "【核心规则:结尾】", "【核心设定:起始】", "【核心设定:结尾】", "【主要角色:起始】", "【主要角色:结尾】", "【其他角色:起始】", "【其他角色:结尾】", "【地点:起始】", "【地点:结尾】"]
     blue_entries = [e for e in entries if e["comment"].startswith("核心规则:")]
     green_entries = [e for e in entries if e["comment"].startswith("核心设定:")]
     ability_entries = [e for e in entries if e["comment"].startswith("替身能力:")]
@@ -521,17 +484,7 @@ def build() -> tuple[dict, dict]:
         "output": str(OUT_JSON),
         "business_entry_count": len(entries),
         "final_entry_count_after_mvu4": 161,
-        "counts": {
-            "section_markers": 14,
-            "memory_infrastructure_extra": 4,
-            "output_runtime_rules": 2,
-            "timelines": len(tl_entries),
-            "blue_rules": len(blue_entries),
-            "green_settings": len(green_entries),
-            "stand_abilities": len(ability_entries),
-            "characters": len(char_entries),
-            "locations": len(loc_entries),
-        },
+        "counts": {"section_markers": 14, "memory_infrastructure_extra": 4, "output_runtime_rules": 2, "timelines": len(tl_entries), "blue_rules": len(blue_entries), "green_settings": len(green_entries), "stand_abilities": len(ability_entries), "characters": len(char_entries), "locations": len(loc_entries)},
         "character_partition": {"main": len(main_names), "other": len(other_names)},
         "qa": checks,
     }
@@ -546,42 +499,11 @@ def main() -> None:
     sha = hashlib.sha256(raw.encode("utf-8")).hexdigest()
     manifest["sha256"] = sha
     OUT_MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    qa_lines = [
-        "# 《辉夜大小姐》咩咩全栈世界书装配 QA v1.0",
-        "",
-        "结论：**PASS**",
-        "",
-        f"- 业务资料冻结点：`{SOURCE_FREEZE}`",
-        f"- 世界书：`{OUT_JSON}`",
-        f"- SHA256：`{sha}`",
-        f"- 总条目：**{manifest['business_entry_count']}**",
-        "- 后续接入 MVU 四条后预期：**161**",
-        "",
-        "## 条目计数",
-        "",
-    ]
-    for k, v in manifest["counts"].items():
-        qa_lines.append(f"- {k}: {v}")
+    qa_lines = ["# 《辉夜大小姐》咩咩全栈世界书装配 QA v1.0", "", "结论：**PASS**", "", f"- 业务资料冻结点：`{SOURCE_FREEZE}`", f"- 世界书：`{OUT_JSON}`", f"- SHA256：`{sha}`", f"- 总条目：**{manifest['business_entry_count']}**", "- 后续接入 MVU 四条后预期：**161**", "", "## 条目计数", ""]
+    for k, v in manifest["counts"].items(): qa_lines.append(f"- {k}: {v}")
     qa_lines += ["", "## QA 硬门", ""]
-    for k, v in manifest["qa"].items():
-        qa_lines.append(f"- `{k}: {'PASS' if v else 'FAIL'}`")
-    qa_lines += [
-        "",
-        "## 递归口径",
-        "",
-        "- 9条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。",
-        "- 34条绿灯：`prevent_recursion=true`，`exclude_recursion=true`。",
-        "- 角色 / 替身能力 / 地点：触发型条目双防递归。",
-        "- 记忆基础设施、分区标记、状态栏、战斗思维链、时间线不套绿灯双防递归。",
-        "",
-        "## 装配说明",
-        "",
-        "- 44名人物完整装配：36名大学基础角色经30名替身增强层覆盖/补入后，得到44名去重角色；其中30名替身使者、14名非替身角色。",
-        "- 30份替身能力均为独立条目，不与人物本体合并。",
-        "- 9条时间线完整保留 `<world_timeline>`；仅第一季-上默认启用。",
-        "- `状态栏:默认` 已做最小大学化；`战斗思维链` 明确排除替身战 Total_Score 化。",
-        "- 本轮尚未接入 MVU 四条系统条目，因此此文件是业务世界书 v1.0.0，不宣称真实 Android / SillyTavern 实机 PASS。",
-    ]
+    for k, v in manifest["qa"].items(): qa_lines.append(f"- `{k}: {'PASS' if v else 'FAIL'}`")
+    qa_lines += ["", "## 递归口径", "", "- 9条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。", "- 34条绿灯：`prevent_recursion=true`，`exclude_recursion=true`。", "- 角色 / 替身能力 / 地点：触发型条目双防递归。", "- 记忆基础设施、分区标记、状态栏、战斗思维链、时间线不套绿灯双防递归。", "", "## 装配说明", "", "- 44名人物完整装配：36名大学基础角色经30名替身增强层覆盖/补入后，得到44名去重角色；其中30名替身使者、14名非替身角色。", "- 30份替身能力均为独立条目，不与人物本体合并。", "- 9条时间线完整保留 `<world_timeline>`；仅第一季-上默认启用。", "- `状态栏:默认` 已做最小大学化；`战斗思维链` 明确排除替身战 Total_Score 化。", "- 本轮尚未接入 MVU 四条系统条目，因此此文件是业务世界书 v1.0.0，不宣称真实 Android / SillyTavern 实机 PASS。"]
     OUT_QA.write_text("\n".join(qa_lines) + "\n", encoding="utf-8")
     print(f"PASS: {len(payload['entries'])} entries")
     print(f"PASS: {sha}")
