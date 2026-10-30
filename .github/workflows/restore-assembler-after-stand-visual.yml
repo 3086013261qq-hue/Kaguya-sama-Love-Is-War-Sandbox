@@ -1,0 +1,48 @@
+name: Restore assembler after Stand visual refresh
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-assembler-after-stand-visual.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore complete assembler and retain new source freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout 26806a6baa46a8b3e3e9526bb45e95ca30f3facb -- tools/assemble_fullstack_worldbook.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('tools/assemble_fullstack_worldbook.py')
+          text = path.read_text(encoding='utf-8')
+          text, n = re.subn(
+              r'(?m)^SOURCE_FREEZE\s*=\s*["\'][0-9a-f]{40}["\']$',
+              'SOURCE_FREEZE = "fc3ef03f88e0bd3ea723c44673969db248de6910"',
+              text,
+              count=1,
+          )
+          if n != 1:
+              raise SystemExit('SOURCE_FREEZE not found uniquely')
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit restored assembler
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/assemble_fullstack_worldbook.py
+          git commit -m "fix: restore complete worldbook assembler after Stand visual refresh"
+          git push origin HEAD:main
