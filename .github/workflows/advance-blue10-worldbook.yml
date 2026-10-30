@@ -1,0 +1,79 @@
+name: Advance blue10 Stand battle performance worldbook
+
+on:
+  push:
+    paths:
+      - ".github/workflows/advance-blue10-worldbook.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch assembler for blue10
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('tools/assemble_fullstack_worldbook.py')
+          s = path.read_text(encoding='utf-8')
+          replacements = [
+              ('SOURCE_FREEZE = "3e01d1699f5602836929943a6f670bf95b6fd56f"', 'SOURCE_FREEZE = "f7c59369256025adf670142146602752c3889e26"'),
+              ('if len(blue_paths) != 9:', 'if len(blue_paths) != 10:'),
+              ('blue count {len(blue_paths)} != 9:', 'blue count {len(blue_paths)} != 10:'),
+              ('"ENTRY_COUNT_BUSINESS_157": len(entries) == 157,', '"ENTRY_COUNT_BUSINESS_158": len(entries) == 158,'),
+              ('"BLUE_LIGHT_COUNT_9": len(blue_entries) == 9,', '"BLUE_LIGHT_COUNT_10": len(blue_entries) == 10,'),
+              ('"final_entry_count_after_mvu4": 161,', '"final_entry_count_after_mvu4": 162,'),
+              ('"- 后续接入 MVU 四条后预期：**161**"', '"- 后续接入 MVU 四条后预期：**162**"'),
+              ('"- 9条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。"', '"- 10条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。"'),
+          ]
+          for old, new in replacements:
+              count = s.count(old)
+              if count != 1:
+                  raise SystemExit(f'expected exactly one occurrence of {old!r}, got {count}')
+              s = s.replace(old, new, 1)
+          path.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Build worldbook
+        run: python tools/assemble_fullstack_worldbook.py
+
+      - name: Validate blue10 in built worldbook
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          assert len(data['entries']) == 158, len(data['entries'])
+          matches = [e for e in data['entries'] if e.get('comment') == '核心规则:替身战斗演出与JOJO语法法则']
+          assert len(matches) == 1, len(matches)
+          e = matches[0]
+          assert e['constant'] is True and e['selective'] is False
+          assert e['extensions']['prevent_recursion'] is False
+          assert e['extensions']['exclude_recursion'] is False
+          assert '喊出替身名' in e['content']
+          assert 'JOJO立与身体演出' in e['content']
+          assert '对白节奏' in e['content']
+          assert '描写与镜头语言' in e['content']
+          print('BLUE10_FINAL_BUILD: PASS')
+          PY
+
+      - name: Commit assembler and validated outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tools/assemble_fullstack_worldbook.py \
+            "build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json" \
+            build/worldbook/WORLDBOOK_ASSEMBLY_v1.0_QA.md \
+            build/worldbook/manifest_v1.0.0.json
+          git commit -m "build: integrate blue10 Stand battle performance rule"
+          git push origin HEAD:main
