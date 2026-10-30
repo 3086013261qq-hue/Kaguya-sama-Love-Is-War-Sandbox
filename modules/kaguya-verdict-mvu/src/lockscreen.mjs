@@ -54,8 +54,7 @@ export function createVideoLockscreen(root, manifest, options = {}) {
     frame.allow = 'autoplay; fullscreen; picture-in-picture';
     frame.referrerPolicy = 'strict-origin-when-cross-origin';
     frame.setAttribute('allowfullscreen', 'true');
-    // Prefer a resolved official player URL when later supplied. Until then the user-provided b23 short URL is used.
-    frame.src = page.embed_url || page.short_url;
+    frame.src = page.embed_url || page.source_url || page.short_url;
     wrap.appendChild(frame);
   }
 
@@ -73,7 +72,7 @@ export function createVideoLockscreen(root, manifest, options = {}) {
         render();
       }, { once: true });
     });
-    external.href = page.short_url;
+    external.href = page.source_url || page.short_url;
   }
 
   function move(delta) {
