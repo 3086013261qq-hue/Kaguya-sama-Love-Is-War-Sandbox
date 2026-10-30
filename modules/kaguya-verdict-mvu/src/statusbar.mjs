@@ -23,6 +23,17 @@ function ensureStyle() {
   d.head.appendChild(link);
 }
 
+function resetGlobalAudio() {
+  try {
+    const audio = doc().querySelector('audio[data-kaguya-mvu-audio]');
+    if (!audio) return;
+    audio.pause();
+    audio.removeAttribute('src');
+    delete audio.dataset.kaguyaTrackId;
+    audio.load();
+  } catch {}
+}
+
 async function manifests() {
   if (!manifestsPromise) {
     manifestsPromise = Promise.all([
@@ -145,12 +156,13 @@ $(async () => {
   const refreshSoon = () => { setTimeout(refreshActive, 0); setTimeout(refreshActive, 700); };
 
   eventOn(ev.VARIABLE_UPDATE_ENDED || 'mag_variable_update_ended', refreshSoon);
-  eventOn(ev.VARIABLE_INITIALIZED || 'mag_variable_initiailized', refreshSoon);
+  eventOn(ev.VARIABLE_INITIALIZED || 'mag_variable_initialized', refreshSoon);
   eventOn(tavern_events.CHARACTER_MESSAGE_RENDERED, remountSoon);
   eventOn(tavern_events.MESSAGE_UPDATED, remountSoon);
   eventOn(tavern_events.MESSAGE_SWIPED, remountSoon);
   eventOn(tavern_events.MESSAGE_DELETED, remountSoon);
   eventOn(tavern_events.CHAT_CHANGED, () => {
+    resetGlobalAudio();
     window.parent.__kaguyaMvuEntered = false;
     remountSoon();
   });
@@ -159,6 +171,7 @@ $(async () => {
 });
 
 $(window).on('pagehide', () => {
+  resetGlobalAudio();
   try { active?.app?.destroy(); } catch {}
   active = null;
   clearHosts();
