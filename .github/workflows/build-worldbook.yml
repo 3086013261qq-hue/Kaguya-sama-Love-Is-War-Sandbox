@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -31,3 +31,18 @@ jobs:
             build/worldbook/WORLDBOOK_ASSEMBLY_v1.0_QA.md
             build/worldbook/manifest_v1.0.0.json
           if-no-files-found: error
+
+      - name: Commit validated outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            "build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json" \
+            "build/worldbook/WORLDBOOK_ASSEMBLY_v1.0_QA.md" \
+            "build/worldbook/manifest_v1.0.0.json"
+          if git diff --cached --quiet; then
+            echo "Validated outputs already match repository."
+            exit 0
+          fi
+          git commit -m "build: assemble fullstack worldbook v1.0.0"
+          git push origin HEAD:main
