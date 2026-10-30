@@ -24,10 +24,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install pinned image dependency
+      - name: Install pinned parser dependency
         run: python -m pip install --disable-pip-version-check "pillow==12.3.0"
 
-      - name: Syntax check MVU modules
+      - name: Syntax check MVU modules and assembler
         run: |
           node --check modules/kaguya-verdict-mvu/src/player.mjs
           node --check modules/kaguya-verdict-mvu/src/lockscreen.mjs
@@ -35,28 +35,72 @@ jobs:
           node --check modules/kaguya-verdict-mvu/src/statusbar.mjs
           python -m py_compile tools/build_fullstack_card.py
 
-      - name: Build candidate1 JSON and PNG
-        run: python tools/build_fullstack_card.py
+      - name: Build and validate authoritative candidate1 JSON
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from tools.build_fullstack_card import build_card, OUT_DIR, OUT_JSON, OUT_QA, RUNTIME_REF
+          OUT_DIR.mkdir(parents=True, exist_ok=True)
+          card = build_card()
+          raw = (json.dumps(card, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+          OUT_JSON.write_bytes(raw)
+          entries = card['data']['character_book']['entries']
+          tech = {e['comment']: e for e in entries[-4:]}
+          scripts = card['data']['extensions']['tavern_helper']['scripts']
+          regexes = card['data']['extensions']['regex_scripts']
+          checks = {
+              'chara_card_v3': card['spec'] == 'chara_card_v3' and card['spec_version'] == '3.0',
+              'worldbook_entry_count_162': len(entries) == 162,
+              'business_entry_count_158': len(entries[:-4]) == 158,
+              'mvu_four_comments_exact': set(tech) == {'[mvu_update]变量更新规则','[mvu_update]变量输出格式','变量列表','[initvar]变量初始化勿开'},
+              'mvu_four_double_recursion': all(e['extensions']['prevent_recursion'] and e['extensions']['exclude_recursion'] for e in tech.values()),
+              'mvu_scan_depth_null': all(e['extensions']['scan_depth'] is None for e in tech.values()),
+              'initvar_disabled': not tech['[initvar]变量初始化勿开']['enabled'],
+              'three_tavern_helper_scripts': [s['name'] for s in scripts] == ['MVU','MVU ZOD','变量状态栏'],
+              'two_mvu_regex_scripts': len(regexes) == 2,
+              'runtime_pinned': RUNTIME_REF in scripts[2]['content'],
+              'legacy_high_school_opening_removed': not any(x in card['data']['first_mes'] + '\n' + '\n'.join(card['data']['alternate_greetings']) for x in ('秀知院学园','男高中生','桌游部','超精英贵族学校')),
+          }
+          if not all(checks.values()):
+              raise SystemExit('QA failed: ' + ', '.join(k for k,v in checks.items() if not v))
+          qa = {
+              'schema': 'kaguya-jojo-fullstack-card-candidate1.json-stage.qa.v1',
+              'result': 'PASS',
+              'runtime_ref': RUNTIME_REF,
+              'business_entries': 158,
+              'mvu_system_entries': 4,
+              'worldbook_entries': 162,
+              'json_bytes': len(raw),
+              'json_sha256': hashlib.sha256(raw).hexdigest(),
+              'checks': checks,
+              'png_packaging': 'performed locally from the user-approved original cover; not claimed by this JSON-stage workflow',
+              'real_android_sillytavern_pass': False,
+          }
+          OUT_QA.write_text(json.dumps(qa, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print('CANDIDATE1_JSON_STAGE: PASS')
+          print(qa['json_sha256'])
+          PY
 
-      - name: Upload candidate artifact
+      - name: Upload authoritative JSON artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kaguya-university-stand-candidate1
+          name: kaguya-university-stand-candidate1-json
           path: |
             build/card/辉夜大小姐_秀知院大学_替身版_v1.0.0-candidate1.json
-            build/card/辉夜大小姐_秀知院大学_替身版_v1.0.0-candidate1.png
-            build/card/辉夜大小姐_秀知院大学_替身版_v1.0.0-candidate1-compat-dual.png
             build/card/CARD_ASSEMBLY_candidate1_QA.json
           if-no-files-found: error
 
-      - name: Commit validated candidate outputs
+      - name: Commit validated JSON-stage outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add build/card/
+          git add \
+            "build/card/辉夜大小姐_秀知院大学_替身版_v1.0.0-candidate1.json" \
+            build/card/CARD_ASSEMBLY_candidate1_QA.json
           if git diff --cached --quiet; then
-            echo "Validated candidate outputs already match repository."
+            echo "Validated JSON outputs already match repository."
             exit 0
           fi
-          git commit -m "build: assemble Kaguya fullstack candidate1"
+          git commit -m "build: assemble Kaguya fullstack candidate1 JSON"
           git push origin HEAD:main
