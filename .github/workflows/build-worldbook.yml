@@ -1,5 +1,6 @@
 name: Build fullstack worldbook
 
+# Rebuild trigger: Stand appearance visual refinement v1.1
 on:
   push:
     paths:
