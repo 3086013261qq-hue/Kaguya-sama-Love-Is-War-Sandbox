@@ -1,6 +1,6 @@
 {
   "format": "kaguya-shuchiin-university-stand-fullstack-worldbook-v1",
-  "source_freeze": "1f9ae635c82ff7cbaa08513b238429fa1663ee31",
+  "source_freeze": "fc3ef03f88e0bd3ea723c44673969db248de6910",
   "output": "build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json",
   "business_entry_count": 157,
   "final_entry_count_after_mvu4": 161,
@@ -44,5 +44,5 @@
     "NO_LEGACY_ANTI_STAND_RULE": true,
     "NO_PREMATURE_HIGH_TIER_STAND_EVOLUTION": true
   },
-  "sha256": "caed89ad56c9ebec7bc0db79290d68996c8a320c76f26c169c71122d6ecef583"
+  "sha256": "15d0a42cc57bcbeb30b63ba905e2b37be1b3c4254960c37527135caec1756d93"
 }

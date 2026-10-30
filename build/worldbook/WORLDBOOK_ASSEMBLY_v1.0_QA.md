@@ -2,9 +2,9 @@
 
 结论：**PASS**
 
-- 业务资料冻结点：`1f9ae635c82ff7cbaa08513b238429fa1663ee31`
+- 业务资料冻结点：`fc3ef03f88e0bd3ea723c44673969db248de6910`
 - 世界书：`build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json`
-- SHA256：`caed89ad56c9ebec7bc0db79290d68996c8a320c76f26c169c71122d6ecef583`
+- SHA256：`15d0a42cc57bcbeb30b63ba905e2b37be1b3c4254960c37527135caec1756d93`
 - 总条目：**157**
 - 后续接入 MVU 四条后预期：**161**
 
