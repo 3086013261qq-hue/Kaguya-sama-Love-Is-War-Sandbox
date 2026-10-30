@@ -110,7 +110,7 @@
             "enabled": true,
             "name": "变量状态栏",
             "id": "mvu-statusbar",
-            "content": "import 'https://testingcf.jsdelivr.net/gh/3086013261qq-hue/Kaguya-sama-Love-Is-War-Sandbox@8870c98f6eb9350cdce697126978bb0021ae01a9/modules/kaguya-verdict-mvu/src/statusbar.mjs';\n",
+            "content": "import 'https://testingcf.jsdelivr.net/gh/3086013261qq-hue/Kaguya-sama-Love-Is-War-Sandbox@e96a243b45a7563b210404ced6fc0f01a46e3939/modules/kaguya-verdict-mvu/src/statusbar.mjs';\n",
             "info": "最新合法AI楼层挂载双视频锁屏、败北竖条与Awake单实例播放器。",
             "button": {
               "enabled": false,
