@@ -11,26 +11,32 @@
       "order": 1,
       "title": "吉良吉影大小姐想让我告白~枯萎穿心！",
       "creator": "可云_Keyun",
+      "bvid": "BV1xP4y1B7iG",
+      "source_url": "https://www.bilibili.com/video/BV1xP4y1B7iG/",
       "short_url": "https://b23.tv/y3zZF15",
+      "embed_url": "https://player.bilibili.com/player.html?bvid=BV1xP4y1B7iG&page=1&autoplay=0&danmaku=0",
       "source": "bilibili",
       "role": "primary",
       "duration_hint": "01:28",
       "published_hint": "2020-08-10",
-      "embed_mode": "redirect-iframe-with-fallback",
-      "fallback_action": "open-short-url"
+      "embed_mode": "official-bilibili-player",
+      "fallback_action": "open-source-url"
     },
     {
       "id": "arakis-pole-dance",
       "order": 2,
       "title": "【吊带袜JO使】~荒木庄的第一次钢管舞就献给你了☆",
       "creator": "可云_Keyun",
+      "bvid": "BV1iD4y1U7ki",
+      "source_url": "https://www.bilibili.com/video/BV1iD4y1U7ki/",
       "short_url": "https://b23.tv/qKAKp5U",
+      "embed_url": "https://player.bilibili.com/player.html?bvid=BV1iD4y1U7ki&page=1&autoplay=0&danmaku=0",
       "source": "bilibili",
       "role": "easter-egg",
       "duration_hint": "01:08",
       "published_hint": "2022-12-23",
-      "embed_mode": "redirect-iframe-with-fallback",
-      "fallback_action": "open-short-url"
+      "embed_mode": "official-bilibili-player",
+      "fallback_action": "open-source-url"
     }
   ]
 }
