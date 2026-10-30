@@ -1,0 +1,25 @@
+{
+  "schema": "kaguya-jojo-fullstack-card-candidate1.json-stage.qa.v1",
+  "result": "PASS",
+  "runtime_ref": "646933f016575ac4a18c30278edc115e8f0131ed",
+  "business_entries": 158,
+  "mvu_system_entries": 4,
+  "worldbook_entries": 162,
+  "json_bytes": 627389,
+  "json_sha256": "09f1face8160212989876b9ca2ad83e5987379f351b80408490880f395bf7d0b",
+  "checks": {
+    "chara_card_v3": true,
+    "worldbook_entry_count_162": true,
+    "business_entry_count_158": true,
+    "mvu_four_comments_exact": true,
+    "mvu_four_double_recursion": true,
+    "mvu_scan_depth_null": true,
+    "initvar_disabled": true,
+    "three_tavern_helper_scripts": true,
+    "two_mvu_regex_scripts": true,
+    "runtime_pinned": true,
+    "legacy_high_school_opening_removed": true
+  },
+  "png_packaging": "performed locally from the user-approved original cover; not claimed by this JSON-stage workflow",
+  "real_android_sillytavern_pass": false
+}
