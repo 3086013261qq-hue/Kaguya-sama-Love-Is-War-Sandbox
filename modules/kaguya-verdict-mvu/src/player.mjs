@@ -1,5 +1,4 @@
-// Adapted from the mature Transformers-Steel-Maidens single-audio lifecycle.
-// One Audio element survives UI rerenders; DOM rendering never creates a second player.
+// Mature single-audio lifecycle: the Audio element survives MVU message rerenders.
 export function createPlayer(audio, manifest, changed = () => {}) {
   const tracks = Array.isArray(manifest?.tracks) ? manifest.tracks : [];
   const defaultId = manifest?.default_track_id;
@@ -7,8 +6,9 @@ export function createPlayer(audio, manifest, changed = () => {}) {
     throw new Error('辉夜曲库配置无效');
   }
 
-  let current = -1;
-  let status = '待播放';
+  let current = tracks.findIndex(t => t.id === audio.dataset.kaguyaTrackId);
+  if (current < 0 && audio.src) current = tracks.findIndex(t => t.url === audio.src);
+  let status = audio.paused ? '待播放' : '播放中';
   let disposed = false;
   let attempt = 0;
   let blocked = false;
@@ -53,11 +53,12 @@ export function createPlayer(audio, manifest, changed = () => {}) {
       emit();
       return false;
     }
-    if (current !== index) {
+    if (current !== index || audio.src !== tracks[index].url) {
       attempt++;
       blocked = false;
       audio.pause();
       current = index;
+      audio.dataset.kaguyaTrackId = tracks[index].id;
       audio.src = tracks[index].url;
       status = '加载中';
       audio.load();
@@ -133,6 +134,8 @@ export function createPlayer(audio, manifest, changed = () => {}) {
     emit();
   });
 
+  emit();
+
   return {
     snapshot,
     select,
@@ -158,10 +161,7 @@ export function createPlayer(audio, manifest, changed = () => {}) {
       disposed = true;
       attempt++;
       listeners.forEach(([name, fn]) => audio.removeEventListener(name, fn));
-      audio.pause();
-      audio.removeAttribute('src');
-      audio.load();
-      audio.remove();
+      // Deliberately keep the global audio element/src/playback alive across MVU rerenders.
     },
   };
 }
