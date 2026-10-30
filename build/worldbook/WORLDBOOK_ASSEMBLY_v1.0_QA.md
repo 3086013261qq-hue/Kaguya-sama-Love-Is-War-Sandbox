@@ -2,11 +2,11 @@
 
 结论：**PASS**
 
-- 业务资料冻结点：`3e01d1699f5602836929943a6f670bf95b6fd56f`
+- 业务资料冻结点：`f7c59369256025adf670142146602752c3889e26`
 - 世界书：`build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json`
-- SHA256：`48ba0f8f4137a81eb9c705dd223de37fb315de3d1af23b1e4270bd5a27b36200`
-- 总条目：**157**
-- 后续接入 MVU 四条后预期：**161**
+- SHA256：`960e2c47657f29ca0300d3fc4029491639472d4b1e24865debb91ff1c0172277`
+- 总条目：**158**
+- 后续接入 MVU 四条后预期：**162**
 
 ## 条目计数
 
@@ -14,7 +14,7 @@
 - memory_infrastructure_extra: 4
 - output_runtime_rules: 2
 - timelines: 9
-- blue_rules: 9
+- blue_rules: 10
 - green_settings: 34
 - stand_abilities: 30
 - characters: 44
@@ -22,12 +22,12 @@
 
 ## QA 硬门
 
-- `ENTRY_COUNT_BUSINESS_157: PASS`
+- `ENTRY_COUNT_BUSINESS_158: PASS`
 - `SECTION_MARKERS_14_UNIQUE: PASS`
 - `MEMORY_INFRASTRUCTURE_COMPLETE: PASS`
 - `STATUS_FORMAT_PRESENT_AND_UNIVERSITY_SAFE: PASS`
 - `COMBAT_DRIVER_PRESENT_AND_STAND_EXCLUDED: PASS`
-- `BLUE_LIGHT_COUNT_9: PASS`
+- `BLUE_LIGHT_COUNT_10: PASS`
 - `BLUE_LIGHT_NO_RECURSION_GUARDS: PASS`
 - `GREEN_LIGHT_COUNT_34: PASS`
 - `GREEN_LIGHT_DOUBLE_RECURSION_GUARD: PASS`
@@ -48,7 +48,7 @@
 
 ## 递归口径
 
-- 9条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。
+- 10条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。
 - 34条绿灯：`prevent_recursion=true`，`exclude_recursion=true`。
 - 角色 / 替身能力 / 地点：触发型条目双防递归。
 - 记忆基础设施、分区标记、状态栏、战斗思维链、时间线不套绿灯双防递归。

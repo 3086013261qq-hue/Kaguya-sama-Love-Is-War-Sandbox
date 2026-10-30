@@ -7,7 +7,7 @@ import re
 import subprocess
 from pathlib import Path
 
-SOURCE_FREEZE = "3e01d1699f5602836929943a6f670bf95b6fd56f"
+SOURCE_FREEZE = "f7c59369256025adf670142146602752c3889e26"
 OUT_DIR = Path("build/worldbook")
 OUT_JSON = OUT_DIR / "辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json"
 OUT_QA = OUT_DIR / "WORLDBOOK_ASSEMBLY_v1.0_QA.md"
@@ -336,8 +336,8 @@ def build() -> tuple[dict, dict]:
             if re.search(r"(?m)^#\s*蓝灯\d+｜", t):
                 blue_paths.append(p)
     blue_paths.sort()
-    if len(blue_paths) != 9:
-        raise RuntimeError(f"blue count {len(blue_paths)} != 9: {blue_paths}")
+    if len(blue_paths) != 10:
+        raise RuntimeError(f"blue count {len(blue_paths)} != 10: {blue_paths}")
     entries.append(marker("【核心规则:起始】", 450))
     for idx, p in enumerate(blue_paths):
         title, content = parse_blue_source(p)
@@ -450,12 +450,12 @@ def build() -> tuple[dict, dict]:
     tl_entries = [e for e in entries if e["comment"].startswith("时间线-")]
 
     checks = {
-        "ENTRY_COUNT_BUSINESS_157": len(entries) == 157,
+        "ENTRY_COUNT_BUSINESS_158": len(entries) == 158,
         "SECTION_MARKERS_14_UNIQUE": all(comments.count(x) == 1 for x in marker_names),
         "MEMORY_INFRASTRUCTURE_COMPLETE": all(x in comments for x in ["🗑️清空局部变量(别关)", "日常记忆存储", "重大记忆存储", "玩家身世背景"]),
         "STATUS_FORMAT_PRESENT_AND_UNIVERSITY_SAFE": "状态栏:默认" in comments and "秀知院学园" not in status_content,
         "COMBAT_DRIVER_PRESENT_AND_STAND_EXCLUDED": "战斗思维链" in comments and "替身战严禁套用知识/体育Total_Score公式" in combat_content,
-        "BLUE_LIGHT_COUNT_9": len(blue_entries) == 9,
+        "BLUE_LIGHT_COUNT_10": len(blue_entries) == 10,
         "BLUE_LIGHT_NO_RECURSION_GUARDS": all(not e["extensions"]["prevent_recursion"] and not e["extensions"]["exclude_recursion"] for e in blue_entries),
         "GREEN_LIGHT_COUNT_34": len(green_entries) == 34,
         "GREEN_LIGHT_DOUBLE_RECURSION_GUARD": all(e["extensions"]["prevent_recursion"] and e["extensions"]["exclude_recursion"] for e in green_entries),
@@ -483,7 +483,7 @@ def build() -> tuple[dict, dict]:
         "source_freeze": SOURCE_FREEZE,
         "output": str(OUT_JSON),
         "business_entry_count": len(entries),
-        "final_entry_count_after_mvu4": 161,
+        "final_entry_count_after_mvu4": 162,
         "counts": {"section_markers": 14, "memory_infrastructure_extra": 4, "output_runtime_rules": 2, "timelines": len(tl_entries), "blue_rules": len(blue_entries), "green_settings": len(green_entries), "stand_abilities": len(ability_entries), "characters": len(char_entries), "locations": len(loc_entries)},
         "character_partition": {"main": len(main_names), "other": len(other_names)},
         "qa": checks,
@@ -499,11 +499,11 @@ def main() -> None:
     sha = hashlib.sha256(raw.encode("utf-8")).hexdigest()
     manifest["sha256"] = sha
     OUT_MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    qa_lines = ["# 《辉夜大小姐》咩咩全栈世界书装配 QA v1.0", "", "结论：**PASS**", "", f"- 业务资料冻结点：`{SOURCE_FREEZE}`", f"- 世界书：`{OUT_JSON}`", f"- SHA256：`{sha}`", f"- 总条目：**{manifest['business_entry_count']}**", "- 后续接入 MVU 四条后预期：**161**", "", "## 条目计数", ""]
+    qa_lines = ["# 《辉夜大小姐》咩咩全栈世界书装配 QA v1.0", "", "结论：**PASS**", "", f"- 业务资料冻结点：`{SOURCE_FREEZE}`", f"- 世界书：`{OUT_JSON}`", f"- SHA256：`{sha}`", f"- 总条目：**{manifest['business_entry_count']}**", "- 后续接入 MVU 四条后预期：**162**", "", "## 条目计数", ""]
     for k, v in manifest["counts"].items(): qa_lines.append(f"- {k}: {v}")
     qa_lines += ["", "## QA 硬门", ""]
     for k, v in manifest["qa"].items(): qa_lines.append(f"- `{k}: {'PASS' if v else 'FAIL'}`")
-    qa_lines += ["", "## 递归口径", "", "- 9条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。", "- 34条绿灯：`prevent_recursion=true`，`exclude_recursion=true`。", "- 角色 / 替身能力 / 地点：触发型条目双防递归。", "- 记忆基础设施、分区标记、状态栏、战斗思维链、时间线不套绿灯双防递归。", "", "## 装配说明", "", "- 44名人物完整装配：36名大学基础角色经30名替身增强层覆盖/补入后，得到44名去重角色；其中30名替身使者、14名非替身角色。", "- 30份替身能力均为独立条目，不与人物本体合并。", "- 9条时间线完整保留 `<world_timeline>`；仅第一季-上默认启用。", "- `状态栏:默认` 已做最小大学化；`战斗思维链` 明确排除替身战 Total_Score 化。", "- 本轮尚未接入 MVU 四条系统条目，因此此文件是业务世界书 v1.0.0，不宣称真实 Android / SillyTavern 实机 PASS。"]
+    qa_lines += ["", "## 递归口径", "", "- 10条蓝灯：`prevent_recursion=false`，`exclude_recursion=false`。", "- 34条绿灯：`prevent_recursion=true`，`exclude_recursion=true`。", "- 角色 / 替身能力 / 地点：触发型条目双防递归。", "- 记忆基础设施、分区标记、状态栏、战斗思维链、时间线不套绿灯双防递归。", "", "## 装配说明", "", "- 44名人物完整装配：36名大学基础角色经30名替身增强层覆盖/补入后，得到44名去重角色；其中30名替身使者、14名非替身角色。", "- 30份替身能力均为独立条目，不与人物本体合并。", "- 9条时间线完整保留 `<world_timeline>`；仅第一季-上默认启用。", "- `状态栏:默认` 已做最小大学化；`战斗思维链` 明确排除替身战 Total_Score 化。", "- 本轮尚未接入 MVU 四条系统条目，因此此文件是业务世界书 v1.0.0，不宣称真实 Android / SillyTavern 实机 PASS。"]
     OUT_QA.write_text("\n".join(qa_lines) + "\n", encoding="utf-8")
     print(f"PASS: {len(payload['entries'])} entries")
     print(f"PASS: {sha}")

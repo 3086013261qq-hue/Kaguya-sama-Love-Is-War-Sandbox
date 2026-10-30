@@ -1,15 +1,15 @@
 {
   "format": "kaguya-shuchiin-university-stand-fullstack-worldbook-v1",
-  "source_freeze": "3e01d1699f5602836929943a6f670bf95b6fd56f",
+  "source_freeze": "f7c59369256025adf670142146602752c3889e26",
   "output": "build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json",
-  "business_entry_count": 157,
-  "final_entry_count_after_mvu4": 161,
+  "business_entry_count": 158,
+  "final_entry_count_after_mvu4": 162,
   "counts": {
     "section_markers": 14,
     "memory_infrastructure_extra": 4,
     "output_runtime_rules": 2,
     "timelines": 9,
-    "blue_rules": 9,
+    "blue_rules": 10,
     "green_settings": 34,
     "stand_abilities": 30,
     "characters": 44,
@@ -20,12 +20,12 @@
     "other": 22
   },
   "qa": {
-    "ENTRY_COUNT_BUSINESS_157": true,
+    "ENTRY_COUNT_BUSINESS_158": true,
     "SECTION_MARKERS_14_UNIQUE": true,
     "MEMORY_INFRASTRUCTURE_COMPLETE": true,
     "STATUS_FORMAT_PRESENT_AND_UNIVERSITY_SAFE": true,
     "COMBAT_DRIVER_PRESENT_AND_STAND_EXCLUDED": true,
-    "BLUE_LIGHT_COUNT_9": true,
+    "BLUE_LIGHT_COUNT_10": true,
     "BLUE_LIGHT_NO_RECURSION_GUARDS": true,
     "GREEN_LIGHT_COUNT_34": true,
     "GREEN_LIGHT_DOUBLE_RECURSION_GUARD": true,
@@ -44,5 +44,5 @@
     "NO_LEGACY_ANTI_STAND_RULE": true,
     "NO_PREMATURE_HIGH_TIER_STAND_EVOLUTION": true
   },
-  "sha256": "48ba0f8f4137a81eb9c705dd223de37fb315de3d1af23b1e4270bd5a27b36200"
+  "sha256": "960e2c47657f29ca0300d3fc4029491639472d4b1e24865debb91ff1c0172277"
 }
