@@ -1,0 +1,33 @@
+name: Build fullstack worldbook
+
+on:
+  push:
+    paths:
+      - "tools/assemble_fullstack_worldbook.py"
+      - ".github/workflows/build-worldbook.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build worldbook
+        run: python tools/assemble_fullstack_worldbook.py
+
+      - name: Upload worldbook artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaguya-fullstack-worldbook-v1.0.0
+          path: |
+            build/worldbook/辉夜大小姐_秀知院大学_替身版_worldbook_v1.0.0.json
+            build/worldbook/WORLDBOOK_ASSEMBLY_v1.0_QA.md
+            build/worldbook/manifest_v1.0.0.json
+          if-no-files-found: error
