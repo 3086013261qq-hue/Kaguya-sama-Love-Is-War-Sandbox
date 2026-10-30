@@ -55,16 +55,14 @@ function chatMessage(id) {
 
 function isEligible(id) {
   const m = chatMessage(id);
-  if (!m || id === 0) return false;
-  const notUser = m.is_user !== true && m.role !== 'user';
-  if (!notUser) return false;
-  return !/<\/?opening>/i.test(String(m.message || ''));
+  if (!m) return false;
+  return m.is_user !== true && m.role !== 'user';
 }
 
 function latestEligibleId() {
   let last = -1;
   try { last = Number(getLastMessageId()); } catch {}
-  for (let id = last; id > 0; id--) {
+  for (let id = last; id >= 0; id--) {
     if (isEligible(id)) return id;
   }
   return -1;
