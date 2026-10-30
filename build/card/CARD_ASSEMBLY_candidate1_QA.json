@@ -1,12 +1,12 @@
 {
   "schema": "kaguya-jojo-fullstack-card-candidate1.json-stage.qa.v1",
   "result": "PASS",
-  "runtime_ref": "646933f016575ac4a18c30278edc115e8f0131ed",
+  "runtime_ref": "8870c98f6eb9350cdce697126978bb0021ae01a9",
   "business_entries": 158,
   "mvu_system_entries": 4,
   "worldbook_entries": 162,
   "json_bytes": 627389,
-  "json_sha256": "09f1face8160212989876b9ca2ad83e5987379f351b80408490880f395bf7d0b",
+  "json_sha256": "b07e4634778e72169472cc60f6f64f6692764504238b4a70e561833dae8ce2fd",
   "checks": {
     "chara_card_v3": true,
     "worldbook_entry_count_162": true,
