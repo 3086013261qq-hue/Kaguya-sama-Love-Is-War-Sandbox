@@ -5,7 +5,7 @@ export function createVideoLockscreen(root, manifest, options = {}) {
   if (pages.length !== 2) throw new Error('双页锁屏必须且只能配置2个视频');
 
   const onEnter = typeof options.onEnter === 'function' ? options.onEnter : () => {};
-  let index = Number.isInteger(manifest.default_page) ? manifest.default_page : 0;
+  let index = options.initialPage ?? manifest.default_page ?? 0;
   let touchStartX = null;
   let disposed = false;
 
@@ -81,14 +81,9 @@ export function createVideoLockscreen(root, manifest, options = {}) {
     const page = pages[index];
     renderPlaceholder(page);
     title.textContent = page.title;
-    meta.textContent = `${index + 1} / ${pages.length} · ${page.role === 'primary' ? '主锁屏' : '彩蛋页'}`;
-    pager.innerHTML = pages.map((_, i) => `<button type="button" class="kg-lockscreen__dot${i === index ? ' is-active' : ''}" data-dot="${i}" aria-label="切换到第${i + 1}页"></button>`).join('');
-    pager.querySelectorAll('[data-dot]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        index = Number(btn.dataset.dot);
-        render();
-      }, { once: true });
-    });
+    meta.textContent = page.role === 'primary' ? '主映像 · LOVE IS WAR' : '特別映像 · JOJO';
+    options.onPage?.(index);
+    pager.textContent = `${index + 1} / ${pages.length}`;
     external.href = page.source_url || page.short_url;
   }
 
