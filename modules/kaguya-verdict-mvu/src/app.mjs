@@ -8,9 +8,11 @@ function fmtTime(value) {
   return `${m}:${s}`;
 }
 
-export function mountKaguyaVerdictMvu(root, { musicManifest, videoManifest, getVerdict } = {}) {
+export function mountKaguyaVerdictMvu(root, { musicManifest, videoManifest, getVerdict, onEnter } = {}) {
   if (!root) throw new Error('MVU root missing');
+  const doc = root.ownerDocument || document;
   const readVerdict = typeof getVerdict === 'function' ? getVerdict : () => '今日，胜负未定。';
+  const entered = typeof onEnter === 'function' ? onEnter : () => {};
 
   root.classList.add('kg-mvu');
   root.innerHTML = `
@@ -18,9 +20,11 @@ export function mountKaguyaVerdictMvu(root, { musicManifest, videoManifest, getV
     <section class="kg-panel" data-panel hidden>
       <button type="button" class="kg-panel__back" data-back>返回锁屏</button>
       <div class="kg-verdict-card">
-        <div class="kg-verdict-card__jp">本日の勝敗</div>
-        <div class="kg-verdict-card__text" data-verdict>今日，胜负未定。</div>
-        <div class="kg-verdict-card__stamp">敗北</div>
+        <div class="kg-verdict-strip">
+          <div class="kg-verdict-card__jp">本日の勝敗</div>
+          <div class="kg-verdict-card__text" data-verdict>今日，胜负未定。</div>
+          <div class="kg-verdict-card__stamp">敗北</div>
+        </div>
       </div>
       <div class="kg-player">
         <div class="kg-player__topline">
@@ -60,14 +64,12 @@ export function mountKaguyaVerdictMvu(root, { musicManifest, videoManifest, getV
     .map((track, i) => `<option value="${i}">${track.theme ? '★ ' : ''}${track.title} — ${track.artist}</option>`)
     .join('');
 
-  let audio = document.querySelector('audio[data-kaguya-mvu-audio]');
-  let ownsAudio = false;
+  let audio = doc.querySelector('audio[data-kaguya-mvu-audio]');
   if (!audio) {
-    audio = document.createElement('audio');
+    audio = doc.createElement('audio');
     audio.dataset.kaguyaMvuAudio = '1';
     audio.style.display = 'none';
-    document.body.appendChild(audio);
-    ownsAudio = true;
+    doc.body.appendChild(audio);
   }
 
   function renderPlayer(snap) {
@@ -92,8 +94,7 @@ export function mountKaguyaVerdictMvu(root, { musicManifest, videoManifest, getV
       lockRoot.hidden = true;
       panel.hidden = false;
       refreshVerdict();
-      // Same gesture-triggered behavior as the mature Steel Maidens player.
-      // The lockscreen iframe is already destroyed before Awake starts.
+      entered();
       player.enter();
     },
   });
@@ -137,7 +138,6 @@ export function mountKaguyaVerdictMvu(root, { musicManifest, videoManifest, getV
     destroy() {
       lockscreen.destroy();
       player.destroy();
-      if (!ownsAudio && audio) audio.pause();
       root.innerHTML = '';
     },
   };
