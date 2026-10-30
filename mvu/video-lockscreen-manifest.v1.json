@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "default_page": 0,
+  "single_iframe_only": true,
+  "autoplay": false,
+  "muted": true,
+  "danmaku": false,
+  "pages": [
+    {
+      "id": "kira-kaguya",
+      "order": 1,
+      "title": "吉良吉影大小姐想让我告白~枯萎穿心！",
+      "creator": "可云_Keyun",
+      "short_url": "https://b23.tv/y3zZF15",
+      "source": "bilibili",
+      "role": "primary",
+      "duration_hint": "01:28",
+      "published_hint": "2020-08-10",
+      "embed_mode": "redirect-iframe-with-fallback",
+      "fallback_action": "open-short-url"
+    },
+    {
+      "id": "arakis-pole-dance",
+      "order": 2,
+      "title": "【吊带袜JO使】~荒木庄的第一次钢管舞就献给你了☆",
+      "creator": "可云_Keyun",
+      "short_url": "https://b23.tv/qKAKp5U",
+      "source": "bilibili",
+      "role": "easter-egg",
+      "duration_hint": "01:08",
+      "published_hint": "2022-12-23",
+      "embed_mode": "redirect-iframe-with-fallback",
+      "fallback_action": "open-short-url"
+    }
+  ]
+}
