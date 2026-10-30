@@ -1,0 +1,18 @@
+{
+  "type": "script",
+  "enabled": true,
+  "name": "日漫拟声字视觉插件 v0.1.0",
+  "id": "c0cfe4e7-cd80-4dbd-b7f4-909f019281d8",
+  "content": "import 'https://cdn.jsdelivr.net/gh/3086013261qq-hue/Kaguya-sama-Love-Is-War-Sandbox@0b7382d39d2b5583b26129bf49edb587059d75be/modules/manga-sfx-visualizer/manga-sfx.js'",
+  "info": "完全可选的日漫拟声字视觉增强。监听新收到的角色消息中的隐藏 SFX 注释并在酒馆主界面播放拟声字动画；不修改聊天、世界书、MVU或变量。脚本源码固定到仓库 commit 0b7382d39d2b5583b26129bf49edb587059d75be。",
+  "button": {
+    "enabled": true,
+    "buttons": [
+      {
+        "name": "拟声字预览",
+        "visible": true
+      }
+    ]
+  },
+  "data": {}
+}
