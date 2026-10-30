@@ -13,7 +13,7 @@
     "20_female_characters_27-35.json",
     "21_female_characters_36-43.json",
     "22_female_characters_44-51.json",
-    "30_core_rules.json",
+    "30_core_rules_stand_ready.json",
     "40_output_rules.json",
     "41_timeline_season3.json",
     "42_timeline_season2.json",
@@ -26,7 +26,7 @@
     {"file":"20_female_characters_27-35.json","entry_ids":[26,27,28,29,30,31,32,33,34,35]},
     {"file":"21_female_characters_36-43.json","entry_ids":[36,37,38,39,40,41,42,43]},
     {"file":"22_female_characters_44-51.json","entry_ids":[44,45,46,47,48,49,50,51,52]},
-    {"file":"30_core_rules.json","entry_ids":[53,54,55,56,57,58,59,60,61,62,82]},
+    {"file":"30_core_rules_stand_ready.json","entry_ids":[53,54,55,56,57,58,59,60,61,62,82]},
     {"file":"40_output_rules.json","entry_ids":[63,64,65,75]},
     {"file":"41_timeline_season3.json","entry_ids":[66]},
     {"file":"42_timeline_season2.json","entry_ids":[67,68,69,70]},
@@ -38,6 +38,7 @@
     "all_ids_covered_once": true,
     "default_timeline": "第一季-上 / entry 74",
     "serialization_note": "模块允许 pretty 或 minified JSON；语义一致性以 entry_id、字段结构与 QA 为准。",
-    "runtime_note": "模块是构建输入；正式 Character Book 必须经 assemble_worldbook.py 生成，以确保世界内描述净化规则生效。"
+    "runtime_note": "模块是构建输入；正式 Character Book 必须经 assemble_worldbook.py 生成，以确保世界内描述净化规则生效。",
+    "stand_ready_core": "30_core_rules_stand_ready.json replaces the legacy anti-supernatural core module in assembly; full 9-blue/22-green integration is deferred to final expansion."
   }
 }
