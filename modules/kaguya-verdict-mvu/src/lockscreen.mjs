@@ -1,5 +1,6 @@
 export function createVideoLockscreen(root, manifest, options = {}) {
   if (!root) throw new Error('lockscreen root missing');
+  const doc = root.ownerDocument || document;
   const pages = Array.isArray(manifest?.pages) ? manifest.pages : [];
   if (pages.length !== 2) throw new Error('双页锁屏必须且只能配置2个视频');
 
@@ -45,24 +46,40 @@ export function createVideoLockscreen(root, manifest, options = {}) {
     }
   }
 
-  function makeIframe(page) {
+  function loadVideo(page) {
     destroyIframe();
-    const frame = document.createElement('iframe');
+    const frame = doc.createElement('iframe');
     frame.className = 'kg-lockscreen__iframe';
     frame.title = page.title;
     frame.loading = 'eager';
     frame.allow = 'autoplay; fullscreen; picture-in-picture';
     frame.referrerPolicy = 'strict-origin-when-cross-origin';
     frame.setAttribute('allowfullscreen', 'true');
-    frame.src = page.embed_url || page.source_url || page.short_url;
-    wrap.appendChild(frame);
+    let src = page.embed_url || page.source_url || page.short_url;
+    if (manifest.muted && src.includes('player.bilibili.com') && !/[?&]muted=/.test(src)) {
+      src += `${src.includes('?') ? '&' : '?'}muted=1`;
+    }
+    frame.src = src;
+    wrap.replaceChildren(frame);
+  }
+
+  function renderPlaceholder(page) {
+    destroyIframe();
+    const holder = doc.createElement('div');
+    holder.className = 'kg-lockscreen__video-placeholder';
+    holder.innerHTML = `
+      <div class="kg-lockscreen__playmark">▶</div>
+      <div class="kg-lockscreen__placeholder-title">${page.role === 'primary' ? '主锁屏视频' : '彩蛋视频'}</div>
+      <button type="button" class="kg-lockscreen__load-video">加载本页视频</button>`;
+    holder.querySelector('.kg-lockscreen__load-video').addEventListener('click', () => loadVideo(page), { once: true });
+    wrap.replaceChildren(holder);
   }
 
   function render() {
     if (disposed) return;
     index = (index + pages.length) % pages.length;
     const page = pages[index];
-    makeIframe(page);
+    renderPlaceholder(page);
     title.textContent = page.title;
     meta.textContent = `${index + 1} / ${pages.length} · ${page.role === 'primary' ? '主锁屏' : '彩蛋页'}`;
     pager.innerHTML = pages.map((_, i) => `<button type="button" class="kg-lockscreen__dot${i === index ? ' is-active' : ''}" data-dot="${i}" aria-label="切换到第${i + 1}页"></button>`).join('');
@@ -98,6 +115,7 @@ export function createVideoLockscreen(root, manifest, options = {}) {
     const delta = endX - touchStartX;
     touchStartX = null;
     if (Math.abs(delta) < 54) return;
+    if (wrap.querySelector('iframe')) return;
     move(delta > 0 ? -1 : 1);
   }, { passive: true });
 
