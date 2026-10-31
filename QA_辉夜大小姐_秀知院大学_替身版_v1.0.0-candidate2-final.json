@@ -1,0 +1,42 @@
+{
+  "schema": "kaguya-candidate2-final-qa.v1",
+  "result": "PASS",
+  "card_name": "辉夜大小姐想让我告白｜秀知院大学 × 替身",
+  "character_version": "v1.0.0-candidate2-nav-fix",
+  "worldbook_display_name": "天才们的替身战",
+  "worldbook_entries": 162,
+  "business_entries_expected": 158,
+  "mvu_system_entries_expected": 4,
+  "tavern_helper_scripts": [
+    "MVU",
+    "MVU ZOD",
+    "变量状态栏"
+  ],
+  "regex_scripts": 2,
+  "runtime_ref": "1b58217ce716ddb8f776e8b8e55aad4d7a0e38c5",
+  "first_floor_mvu_hotfix": "PASS",
+  "return_to_outer_lockscreen_hotfix": "PASS",
+  "ccv3_roundtrip_from_png": "PASS",
+  "png_payloads": [
+    "ccv3"
+  ],
+  "files": {
+    "png": {
+      "name": "辉夜大小姐_秀知院大学_替身版_v1.0.0-candidate2-final.png",
+      "size_bytes": 3207306,
+      "sha256": "9b380485f1fbcab8c167ed38312ac7f0df88de2027586908ece1c43257a48929"
+    },
+    "json": {
+      "name": "辉夜大小姐_秀知院大学_替身版_v1.0.0-candidate2-final.json",
+      "size_bytes": 780759,
+      "sha256": "c87aba895c4d0e6ad7e5bfee9ed7f401968ff942a7268390a1d9e163a1f7b0f5"
+    }
+  },
+  "real_android_sillytavern": {
+    "worldbook_visible": true,
+    "first_floor_mvu_visible_after_hotfix": true,
+    "return_to_outer_lockscreen": "awaiting_user_retest",
+    "overall_pass": false
+  },
+  "note": "这是当前最新本地 Candidate2：保留已修复世界书结构，并包含首楼 MVU 挂载兜底与双视频页返回最外层锁屏导航修复。最终 REAL_ANDROID_SILLYTAVERN_PASS 仍需用户对最新 final PNG 再次实机确认。"
+}
